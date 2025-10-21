@@ -5,10 +5,15 @@ function Menu() {
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "" // empty = same domain (for Render)
+    : "http://localhost:5000";
+
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/menu");
+        const response = await fetch(`${API_BASE_URL}/api/menu`);
         const data = await response.json();
         setMenu(data);
       } catch (error) {

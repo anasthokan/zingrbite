@@ -8,7 +8,7 @@ function Offers() {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/offers");
+        const response = await fetch(`${API_BASE_URL}/api/offers`);
         const data = await response.json();
         setOffers(data);
       } catch (error) {
