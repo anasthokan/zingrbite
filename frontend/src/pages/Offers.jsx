@@ -5,6 +5,12 @@ function Offers() {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+   const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "" // empty = same domain (for Render)
+    : "http://localhost:5000";
+
+
   useEffect(() => {
     const fetchOffers = async () => {
       try {
