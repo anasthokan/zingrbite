@@ -4,10 +4,8 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Contact from "./pages/Contact";
-import Footer from "./components/Footer";
 import Offers from "./pages/Offers";
 import About from "./pages/About";
-import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -17,11 +15,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/contact" element={<Contact />} />
-         <Route path="/offers" element={<Offers />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/offers" element={<Offers />} />
+        <Route path="/about" element={<About />} />
       </Routes>
-      <Footer />
     </Router>
   );
 }

@@ -1,0 +1,183 @@
+.about-page {
+  font-family: "Poppins", sans-serif;
+  background-color: #fffaf2;
+  color: #333;
+}
+
+/* HERO SECTION */
+.about-hero {
+  position: relative;
+  height: 70vh;
+  background: url("https://images.unsplash.com/photo-1600891963933-a7b1d62d5b3a?auto=format&fit=crop&w=1400&q=80")
+    no-repeat center center/cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.about-hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.hero-content span {
+  color: #ffb703;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+/* STORY SECTION */
+.about-story {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  padding: 60px 20px;
+}
+
+.story-text {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+}
+
+.story-text h2 {
+  color: #ff6f00;
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.story-text p {
+  line-height: 1.7;
+  margin-bottom: 15px;
+  color: #444;
+}
+
+.story-img {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+}
+
+.story-img img {
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* MISSION SECTION */
+.about-mission {
+  background-color: #000;
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.about-mission h2 {
+  color: #ffb703;
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.about-mission p {
+  max-width: 700px;
+  margin: 0 auto 40px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.mission-points {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+}
+
+.point-card {
+  background-color: #111;
+  border-radius: 10px;
+  padding: 20px;
+  width: 260px;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(255, 183, 3, 0.3);
+  transition: 0.3s;
+}
+
+.point-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 5px 12px rgba(255, 183, 3, 0.4);
+}
+
+.point-card h3 {
+  color: #ffb703;
+  margin-bottom: 10px;
+}
+
+/* LOCATION SECTION */
+.about-location {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.about-location h2 {
+  font-size: 2rem;
+  color: #ff6f00;
+  margin-bottom: 10px;
+}
+
+.about-location p {
+  margin: 8px 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.map-container {
+  max-width: 700px;
+  margin: 20px auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2.2rem;
+  }
+
+  .about-story {
+    flex-direction: column;
+    padding: 40px 20px;
+  }
+
+  .story-img,
+  .story-text {
+    max-width: 90%;
+  }
+
+  .mission-points {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .point-card {
+    width: 85%;
+  }
+}
