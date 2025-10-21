@@ -18,13 +18,20 @@ function Dashboard() {
     image: "",
   });
 
+  const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "" // empty = same domain (for Render)
+    : "http://localhost:5000";
+
+
+
   // ✅ Fetch data
   const fetchAllData = async () => {
     try {
       const [menuRes, offerRes, contactRes] = await Promise.all([
-        fetch("http://localhost:5000/api/menu"),
-        fetch("http://localhost:5000/api/offers"),
-        fetch("http://localhost:5000/api/contact"),
+        fetch(`${API_BASE_URL}/api/menu`),
+        fetch(`${API_BASE_URL}/api/offers`),
+        fetch(`${API_BASE_URL}/api/contacts`),
       ]);
       setMenuItems(await menuRes.json());
       setOffers(await offerRes.json());
