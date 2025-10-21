@@ -31,7 +31,7 @@ function Dashboard() {
       const [menuRes, offerRes, contactRes] = await Promise.all([
         fetch(`${API_BASE_URL}/api/menu`),
         fetch(`${API_BASE_URL}/api/offers`),
-        fetch(`${API_BASE_URL}/api/contacts`),
+        fetch(`${API_BASE_URL}/api/contact`),
       ]);
       setMenuItems(await menuRes.json());
       setOffers(await offerRes.json());
