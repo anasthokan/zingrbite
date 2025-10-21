@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 
+// ✅ Detect environment (local vs production)
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "" // empty → same domain (Render live site)
+    : "http://localhost:5000";
+
 function Dashboard() {
   const [menuItems, setMenuItems] = useState([]);
   const [offers, setOffers] = useState([]);
@@ -18,14 +24,7 @@ function Dashboard() {
     image: "",
   });
 
-  const API_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "" // empty = same domain (for Render)
-    : "http://localhost:5000";
-
-
-
-  // ✅ Fetch data
+  // ✅ Fetch all data (menu, offers, contact)
   const fetchAllData = async () => {
     try {
       const [menuRes, offerRes, contactRes] = await Promise.all([
@@ -33,11 +32,16 @@ function Dashboard() {
         fetch(`${API_BASE_URL}/api/offers`),
         fetch(`${API_BASE_URL}/api/contact`),
       ]);
-      setMenuItems(await menuRes.json());
-      setOffers(await offerRes.json());
-      setContacts(await contactRes.json());
-    } catch (err) {
-      console.error("Error fetching data:", err);
+
+      const menuData = await menuRes.json();
+      const offerData = await offerRes.json();
+      const contactData = await contactRes.json();
+
+      setMenuItems(menuData);
+      setOffers(offerData);
+      setContacts(contactData);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -47,7 +51,7 @@ function Dashboard() {
     fetchAllData();
   }, []);
 
-  // ✅ Handle edit mode
+  // ✅ Handle editing
   const startEdit = (item, type) => {
     setEditId(item._id);
     setEditType(type);
@@ -66,35 +70,31 @@ function Dashboard() {
 
   const saveEdit = async () => {
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/${editType}/${editId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editData),
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/api/${editType}/${editId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editData),
+      });
       const data = await res.json();
-      alert(data.message);
+      alert(data.message || "Item updated!");
       cancelEdit();
       fetchAllData();
     } catch (error) {
-      console.error("Error saving:", error);
+      console.error("Error saving edit:", error);
     }
   };
 
-  // ✅ Delete menu/offer
+  // ✅ Delete items
   const deleteItem = async (id, type) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      await fetch(`http://localhost:5000/api/${type}/${id}`, { method: "DELETE" });
+      await fetch(`${API_BASE_URL}/api/${type}/${id}`, { method: "DELETE" });
       fetchAllData();
     }
   };
 
-  // ✅ Delete contact
   const deleteContact = async (id) => {
     if (window.confirm("Delete this contact message?")) {
-      await fetch(`http://localhost:5000/api/contact/${id}`, { method: "DELETE" });
+      await fetch(`${API_BASE_URL}/api/contact/${id}`, { method: "DELETE" });
       fetchAllData();
     }
   };
@@ -107,14 +107,14 @@ function Dashboard() {
 
   const addNewItem = async () => {
     if (!newItem.type) {
-      alert("Select type (menu or offer)");
+      alert("Please select type (menu or offer)");
       return;
     }
 
     const url =
       newItem.type === "menu"
-        ? "http://localhost:5000/api/menu"
-        : "http://localhost:5000/api/offers";
+        ? `${API_BASE_URL}/api/menu`
+        : `${API_BASE_URL}/api/offers`;
 
     const body =
       newItem.type === "menu"
@@ -131,22 +131,26 @@ function Dashboard() {
             desc: newItem.desc,
           };
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json();
-    alert(data.message);
-    setNewItem({
-      type: "",
-      name: "",
-      price: "",
-      category: "",
-      desc: "",
-      image: "",
-    });
-    fetchAllData();
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      alert(data.message || "New item added!");
+      setNewItem({
+        type: "",
+        name: "",
+        price: "",
+        category: "",
+        desc: "",
+        image: "",
+      });
+      fetchAllData();
+    } catch (error) {
+      console.error("Error adding new item:", error);
+    }
   };
 
   if (loading) return <h2 className="loading">Loading Dashboard...</h2>;
@@ -192,7 +196,7 @@ function Dashboard() {
         </button>
       </div>
 
-      {/* MENU ITEMS */}
+      {/* MENU TABLE */}
       <section className="dashboard-section">
         <h2>🍔 Menu Items</h2>
         <table className="data-table">
@@ -208,27 +212,9 @@ function Dashboard() {
             {menuItems.map((item) =>
               editId === item._id && editType === "menu" ? (
                 <tr key={item._id} className="editing-row">
-                  <td>
-                    <input
-                      name="name"
-                      value={editData.name}
-                      onChange={handleEditChange}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="category"
-                      value={editData.category}
-                      onChange={handleEditChange}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="price"
-                      value={editData.price}
-                      onChange={handleEditChange}
-                    />
-                  </td>
+                  <td><input name="name" value={editData.name} onChange={handleEditChange} /></td>
+                  <td><input name="category" value={editData.category} onChange={handleEditChange} /></td>
+                  <td><input name="price" value={editData.price} onChange={handleEditChange} /></td>
                   <td>
                     <button className="save-btn" onClick={saveEdit}>💾</button>
                     <button className="cancel-btn" onClick={cancelEdit}>❌</button>
@@ -240,15 +226,8 @@ function Dashboard() {
                   <td>{item.category}</td>
                   <td>₹{item.price}</td>
                   <td>
-                    <button className="edit-btn" onClick={() => startEdit(item, "menu")}>
-                      ✏️
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => deleteItem(item._id, "menu")}
-                    >
-                      🗑️
-                    </button>
+                    <button className="edit-btn" onClick={() => startEdit(item, "menu")}>✏️</button>
+                    <button className="delete-btn" onClick={() => deleteItem(item._id, "menu")}>🗑️</button>
                   </td>
                 </tr>
               )
@@ -257,7 +236,7 @@ function Dashboard() {
         </table>
       </section>
 
-      {/* OFFERS */}
+      {/* OFFERS TABLE */}
       <section className="dashboard-section">
         <h2>🎁 Offers</h2>
         <table className="data-table">
@@ -272,20 +251,8 @@ function Dashboard() {
             {offers.map((offer) =>
               editId === offer._id && editType === "offers" ? (
                 <tr key={offer._id} className="editing-row">
-                  <td>
-                    <input
-                      name="name"
-                      value={editData.name}
-                      onChange={handleEditChange}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="price"
-                      value={editData.price}
-                      onChange={handleEditChange}
-                    />
-                  </td>
+                  <td><input name="name" value={editData.name} onChange={handleEditChange} /></td>
+                  <td><input name="price" value={editData.price} onChange={handleEditChange} /></td>
                   <td>
                     <button className="save-btn" onClick={saveEdit}>💾</button>
                     <button className="cancel-btn" onClick={cancelEdit}>❌</button>
@@ -296,15 +263,8 @@ function Dashboard() {
                   <td>{offer.name}</td>
                   <td>{offer.price}</td>
                   <td>
-                    <button className="edit-btn" onClick={() => startEdit(offer, "offers")}>
-                      ✏️
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => deleteItem(offer._id, "offers")}
-                    >
-                      🗑️
-                    </button>
+                    <button className="edit-btn" onClick={() => startEdit(offer, "offers")}>✏️</button>
+                    <button className="delete-btn" onClick={() => deleteItem(offer._id, "offers")}>🗑️</button>
                   </td>
                 </tr>
               )
@@ -313,7 +273,7 @@ function Dashboard() {
         </table>
       </section>
 
-      {/* CONTACT MESSAGES */}
+      {/* CONTACT TABLE */}
       <section className="dashboard-section">
         <h2>📩 Contact Messages</h2>
         <table className="data-table">
@@ -332,12 +292,7 @@ function Dashboard() {
                 <td>{msg.email}</td>
                 <td>{msg.message}</td>
                 <td>
-                  <button
-                    className="delete-btn"
-                    onClick={() => deleteContact(msg._id)}
-                  >
-                    🗑️
-                  </button>
+                  <button className="delete-btn" onClick={() => deleteContact(msg._id)}>🗑️</button>
                 </td>
               </tr>
             ))}
