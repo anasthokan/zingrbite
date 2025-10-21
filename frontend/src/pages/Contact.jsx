@@ -17,6 +17,12 @@ function Contact() {
     e.preventDefault();
     setStatus("Sending...");
 
+     const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "" // empty = same domain (for Render)
+    : "http://localhost:5000";
+
+
     try {
       const res = await fetch(`${API_BASE_URL}/api/offers`, {
         method: "POST",
